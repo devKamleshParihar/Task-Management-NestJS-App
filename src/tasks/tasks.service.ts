@@ -20,10 +20,10 @@ export class TasksService {
     }
 
      async CreateTask(CreateDTO:CreateDTO):Promise<Task>{
-        const {username , name} = CreateDTO;
+        const {title , description} = CreateDTO;
         const task =  this.TaskRepository.create({
-            name,
-            username,
+            title,
+            description,
             status:TaskStatus.OPEN
         })
         await this.TaskRepository.save(task)

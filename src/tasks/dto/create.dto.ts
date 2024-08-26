@@ -2,8 +2,8 @@ import { IsNotEmpty } from "class-validator"
 
 export class CreateDTO {
     @IsNotEmpty()
-    name :string
+    title :string
 
     @IsNotEmpty()
-    username:string
+    description:string
 }

@@ -7,10 +7,10 @@ export class Task {
     id:string
 
     @Column()
-    name:string
+    title:string
 
     @Column()
-    username:string
+    description:string
 
     @Column()
     status:TaskStatus
