@@ -10,4 +10,9 @@ export class AuthController {
     SignUp(@Body() AuthCredentials:AuthCredentials):Promise<void>{
         return this.AuthService.CreateUser(AuthCredentials)
     }
+
+    @Post("/signin")
+    SignIn(@Body() AuthCredentials:AuthCredentials):Promise<{AccessToken:string}>{
+        return this.AuthService.SignInUser(AuthCredentials)
+    }
 }
