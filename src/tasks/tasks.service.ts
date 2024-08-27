@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TaskRepository } from './Task.Repository';
 import { Task } from './Task.Entity';
@@ -9,6 +9,7 @@ import { User } from 'src/auth/user.entity';
 
 @Injectable()
 export class TasksService {
+    private logger = new Logger('TasksService')
     constructor(@InjectRepository(Task)
     private TaskRepository:TaskRepository){}
 
@@ -28,8 +29,13 @@ export class TasksService {
             status:TaskStatus.OPEN,
             user
         })
-        await this.TaskRepository.save(task)
-        return task  
+
+        try {
+            await this.TaskRepository.save(task)
+            return task
+        } catch (error) {
+            throw new InternalServerErrorException()
+        }  
     }
 
     async DeleteTaskByID(id :string,user:User):Promise<string>{
@@ -59,13 +65,18 @@ export class TasksService {
         }
         //show error here 
         if(search){
-            query.andWhere('(LOWER(task.name) LIKE LOWER(:search) OR LOWER(task.username) LIKE LOWER(:search))',{
+            query.andWhere('(LOWER(task.title) LIKE LOWER(:search) OR LOWER(task.description) LIKE LOWER(:search))',{
                 search : `%${search}%`
             })
         }
 
-        const tasks = await query.getMany() 
-        return tasks
+        try {
+            const tasks = await query.getMany() 
+            return tasks
+        } catch (error) {
+            this.logger.error(`user ${user.username} unable to get task ${JSON.stringify(CreateDTO)}`)
+            throw new InternalServerErrorException()
+        }
 
 
         
